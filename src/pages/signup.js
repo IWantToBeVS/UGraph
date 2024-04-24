@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const SignupPage = () => {
   const [username, setUsername] = useState('');
@@ -8,11 +9,15 @@ const SignupPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const navigate = useNavigate();
+
   const handleLogin = async () => {
     if (password === confirmPassword){
         try {
             const res = await axios.post('http://localhost:8000/signup', { username, email, password });
             console.log(res.data);
+            localStorage.setItem('token', res.token);
+            navigate('/plotter');
         } catch (error) {
             console.error(error.response.data);
         }

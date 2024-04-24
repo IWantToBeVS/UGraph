@@ -35,11 +35,11 @@ const signup = async (req, res) => {
             password: hashedPassword,
         });
 
+        const token = jwt.sign({ userId: data._id }, process.env.SECRET_KEY, { expiresIn: '30d'});
+
         const output = await data.save();
 
-        const token = jwt.sign({ userId: data._id }, 'HelloReact', { expiresIn: '30d'});
-
-        res.status(201).json({ token });
+        res.status(200).json({ success: true, message: 'User Login Successful', token: token});
 
         
     } catch (error) {
@@ -67,9 +67,9 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid Credentials'});
         }
 
-        const token = jwt.sign({userId: User._id}, 'HelloReact', { expiresIn: "30d"});
+        const token = jwt.sign({userId: User._id}, process.env.SECRET_KEY, { expiresIn: "30d"});
 
-        res.status(200).json({ token });
+        res.status(200).json({ success: true, message: 'User Login Successful', token: token});
 
         
     } catch (error) {
@@ -80,7 +80,31 @@ const login = async (req, res) => {
 
 }
 
+const authenticate = async (req, res) => {
+
+    try {
+        const { token } = req.body;
+        console.log('Recieved data: ', token);
+
+        const ID = jwt.verify(token, process.env.SECRET_KEY);
+
+        const output = await User.findById(ID.id);
+
+        if (!output){
+            res.status(201).json({ message: "Token Invalid" })
+        }
+
+        res.status(200).json({success: true, message: 'Valid token'})
+
+    }
+    catch (error) {
+        console.error(error);
+    }
+
+}
+
 module.exports = {
     signup,
-    login
+    login,
+    authenticate,
 }

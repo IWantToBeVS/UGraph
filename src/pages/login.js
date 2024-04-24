@@ -14,9 +14,10 @@ const LoginPage = () => {
     try {
       const res = await axios.post('http://localhost:8000/login', { username, password });
       console.log(res.data);
+      localStorage.setItem('token', res.token);
       navigate('/plotter');
     } catch (error) {
-      console.error(error.response.data); 
+      console.error(error); 
     }
   };
 
