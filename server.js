@@ -2,9 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+const bcrypt = require('bcrypt');
+const { Schema } = mongoose;
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const controller = require('./controllers/controller');
 
 // Middleware
 app.use(cors());
@@ -20,7 +23,9 @@ connection.once('open', () => {
   console.log('MongoDB database connection established successfully');
 });
 
+app.post('/signup', controller.signup);
 
+app.post('/login', controller.login);
 
 // Start Server
 app.listen(PORT, () => {
